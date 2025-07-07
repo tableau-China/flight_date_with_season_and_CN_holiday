@@ -357,25 +357,8 @@ where  d."date"  = hol.date ;
 COMMIT;
 
 
--- public.d_date_view source
- -- 创建一个简化视图 
- 
-CREATE OR REPLACE VIEW public.d_date_view
-AS SELECT dd.date,
-    dd.year,
-    dd.day_of_week,
-    dd.flight_season_year,
-    dd.flight_season,
-    dd.is_chinese_holiday,
-    dd.chinese_holiday
-   FROM d_date dd
-  WHERE dd.date >= '2022-01-01'::date AND dd.year <= EXTRACT(YEAR FROM  CURRENT_TIMESTAMP::date );
-
-
-
 
  -- 如下内容废弃 
-
 -- 更新表中的节假日信息，该方式已经被后面的 json 方式替换
 /*
 UPDATE d_date
@@ -572,7 +555,7 @@ row_number()  over  (partition by EXTRACT(YEAR FROM "date") ) as "N_in_month"
 from d_date dd 
 where  EXTRACT(ISODOW FROM "date") =7 and EXTRACT(MONTH FROM "date") <=3
 
-
+*/
 
 
 --  V1 更新 航季 
@@ -625,7 +608,7 @@ COMMIT;
 
 
 -- V2 更新航季对应的年度（完整版）
-/*
+
 -- 假设已经有 d_date 表，并包含 flight_season 和 flight_season_year 字段
 ALTER TABLE d_date ADD COLUMN flight_season VARCHAR(10);
 ALTER TABLE d_date ADD COLUMN flight_season_year INT;
@@ -678,6 +661,23 @@ WHERE
     AND (d."date"  >= sb.prev_start_summer OR sb.prev_start_summer IS NULL);
 -- 提交更新
 COMMIT;
-*/
+
+
+
+-- public.d_date_view source
+ -- 创建一个简化视图 
+ 
+CREATE OR REPLACE VIEW public.d_date_view
+AS SELECT dd.date,
+    dd.year,
+    dd.day_of_week,
+    dd.flight_season_year,
+    dd.flight_season,
+    dd.is_chinese_holiday,
+    dd.chinese_holiday
+   FROM d_date dd
+  WHERE dd.date >= '2022-01-01'::date AND dd.year <= EXTRACT(YEAR FROM  CURRENT_TIMESTAMP::date );
+
+
 
 
